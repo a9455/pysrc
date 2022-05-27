@@ -68,14 +68,14 @@ class OperationNetCDF():
 		# 次元数の設定
 		# ---------------------------
 		for key in list(DictionaryData.keys):
-			tmp	= dictionaryData[key]
+			tmp	= DictionaryData[key]
 			if tmp[0] == "axis":
 				nc.creatDimension(key, tmp[1])
 		
 		# データの設定
 		# ---------------------------
 		for key in list(DictionaryData.keys):
-			tmp	= dictionaryData[key]
+			tmp	= DictionaryData[key]
 			if tmp[0] == "data":
 				print(key, tmp[1], tmp[2])
 				tmpVar		= nc.creatDimension(key, tmp[1], tuple(tmp[2]), fill_value=-9999)
