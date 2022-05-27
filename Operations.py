@@ -8,6 +8,8 @@ class OperationNetCDF():
 	def __init__(self, NcFileName:str):
 		self.NcFileName = NcFileName		# NetCDFのファイル名
 
+	# 読み込み関係
+	# -------------------------------------
 	def read_file(self):
 		""" ファイルの読み込み """
 		self.NcData	= nc.Dataset(self.NcFileName, "r")
@@ -44,6 +46,45 @@ class OperationNetCDF():
 		for var in VariableList:
 			ReturnDic[var]	= np.array(self.NcData[var])
 		return ReturnDic
+
+
+	# 書き込み関係
+	# -------------------------------------
+	def write_netCDF_file(self, DictionaryData={}):
+		"""
+		DictionaryDataを順番に格納していく
+		DictionaryDataの作り方。⇒次元数とデータを設定する（以下は例）
+		"Nx"		: ["axis", 1軸の次元数],
+		"Ny"		: ["axis", 2軸の次元数],
+		"Nz"		: ["axis", 3軸の次元数],
+		"Element1"	: ["data", "dtype", ["Nx", "Ny"]		, Data1],
+		"Element2"	: ["data", "dtype", ["Nx", "Ny", "Nz"]	, Data2],
+		"""
+
+		# ファイルの作成
+		# ---------------------------
+		NcData	= nc.Dataset(self.NcFileName, "w", format="NETCDF4")
+		
+		# 次元数の設定
+		# ---------------------------
+		for key in list(DictionaryData.keys):
+			tmp	= dictionaryData[key]
+			if tmp[0] == "axis":
+				nc.creatDimension(key, tmp[1])
+		
+		# データの設定
+		# ---------------------------
+		for key in list(DictionaryData.keys):
+			tmp	= dictionaryData[key]
+			if tmp[0] == "data":
+				print(key, tmp[1], tmp[2])
+				tmpVar		= nc.creatDimension(key, tmp[1], tuple(tmp[2]), fill_value=-9999)
+				tmpVar[:,:]	= tmp[3]
+
+		nc.close()
+
+
+
 
 
 
